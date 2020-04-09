@@ -113,6 +113,10 @@ def linearOrdering(blocks):
         new_block.placed = True
         unplaced_blocks.remove(new_block)
         order.append(new_block)
+
+    for x in order:
+        x.placed = False
+
     return order
 
 
