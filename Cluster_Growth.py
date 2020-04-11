@@ -1,11 +1,10 @@
-import Floorplan
-import Block
+from Floorplan import Floorplan
 from Coordinate import Coordinate
 
 
 def get_corners(floorplan):
     grid = floorplan.get_grid()
-    corners = {}
+    corners = set()
 
     w, h = floorplan.get_cur_dims()
     # Add outermost edges
@@ -19,13 +18,13 @@ def get_corners(floorplan):
                 if x == 0 and y == 0:
                     corners.add(Coordinate(x, y))
                 elif x == 0 and y != 0:
-                    if grid[x][y - 1] == 1:
+                    if grid[y-1][x] > 0:
                         corners.add(Coordinate(x, y))
                 elif x != 0 and y == 0:
-                    if grid[x - 1][y] == 1:
+                    if grid[y][x-1] > 0:
                         corners.add(Coordinate(x, y))
                 elif x != 0 and y != 0:
-                    if grid[x - 1][y] == 1 and grid[x][y - 1] == 1:
+                    if grid[y][x - 1] == 1 and grid[y - 1][x] > 0:
                         corners.add(Coordinate(x, y))
     return corners
 
@@ -81,14 +80,14 @@ def add_to_floorplan(floorplan, block):
     block.set_placed(True)
     block.set_x(min_corner.x)
     block.set_y(min_corner.y)
-    if (min_flipped):
+    if min_flipped:
         block.swap_dims()
 
     floorplan.place_block(block)
 
 
 def cluster_growth(order):
-    floorplan = Floorplan(200, 200)
+    floorplan = Floorplan(1000, 1000)
 
     for block in order:
         add_to_floorplan(floorplan, block)

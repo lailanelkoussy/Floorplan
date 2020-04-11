@@ -19,8 +19,8 @@ class Floorplan:
 
         for x in range(block.x, block.x + block.width):
             for y in range(block.y, block.y + block.height):
-                assert (self.grid[y][x] != 0), "Place not free to place block!"
-                self.grid[y][x] = 1
+                assert (self.grid[y][x] == 0), "Place not free to place block!"
+                self.grid[y][x] = block.block_id
 
     def get_grid(self):
         return self.grid

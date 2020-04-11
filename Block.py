@@ -13,7 +13,7 @@ class Block:
 		self.connections.append(connection_block_id)
 
 	def swap_dims(self):
-		self.x, self.y = self.y, self.x
+		self.width, self.height = self.height, self.width
 
 	def get_id(self):
 		return self.block_id

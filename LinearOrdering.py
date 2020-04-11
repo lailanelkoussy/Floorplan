@@ -118,36 +118,3 @@ def linearOrdering(blocks):
         x.placed = False
 
     return order
-
-
-################### TESTING ################
-
-blocks = []
-for x in range(6):
-    block = Block(x + 1, x, x) #random width and height, unimportant
-    blocks.append(block)
-
-blocks[0].addConnection(4)
-blocks[3].addConnection(1)
-
-blocks[1].addConnection(3)
-blocks[2].addConnection(2)
-
-blocks[1].addConnection(4)
-blocks[3].addConnection(2)
-
-blocks[1].addConnection(5)
-blocks[4].addConnection(2)
-
-blocks[1].addConnection(6)
-blocks[5].addConnection(2)
-
-blocks[2].addConnection(4)
-blocks[3].addConnection(3)
-
-blocks[4].addConnection(6)
-blocks[5].addConnection(5)
-
-order = linearOrdering(blocks)
-
-print(order)
