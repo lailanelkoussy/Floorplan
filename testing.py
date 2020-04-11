@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
             print(floorplan.grid[y][x], end=" ")
         print()
-
+    print("Final Area:", floorplan.cur_width * floorplan.cur_height)
     del draw
     image.show()
 
