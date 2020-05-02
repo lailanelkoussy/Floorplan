@@ -1,4 +1,4 @@
-from LinearOrdering import linearOrdering
+from Linear_Ordering import linear_ordering
 from Cluster_Growth import cluster_growth
 from Block import Block
 from Coordinate import Coordinate
@@ -13,18 +13,6 @@ if __name__ == "__main__":
 
     print("Input:")
 
-    # block = Block(1, 6, 8)
-    # blocks.append(block)
-    # block = Block(2, 6, 1)
-    # blocks.append(block)
-    # block = Block(3, 6, 1)
-    # blocks.append(block)
-    # block = Block(4, 4, 6)
-    # blocks.append(block)
-    # block = Block(5, 6, 1)
-    # blocks.append(block)
-    # block = Block(6, 6, 1)
-    # blocks.append(block)
 
     blocks[0].addConnection(4)
     blocks[3].addConnection(1)
@@ -59,7 +47,7 @@ if __name__ == "__main__":
     # Run linear Ordering
     print("\nRunning Linear Ordering Algorithm...")
     input()
-    order = linearOrdering(blocks)
+    order = linear_ordering(blocks)
 
     # Print order
     print("Order:", end=" ")

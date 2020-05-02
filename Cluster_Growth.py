@@ -18,10 +18,10 @@ def get_corners(floorplan):
                 if x == 0 and y == 0:
                     corners.add(Coordinate(x, y))
                 elif x == 0 and y != 0:
-                    if grid[y-1][x] > 0:
+                    if grid[y - 1][x] > 0:
                         corners.add(Coordinate(x, y))
                 elif x != 0 and y == 0:
-                    if grid[y][x-1] > 0:
+                    if grid[y][x - 1] > 0:
                         corners.add(Coordinate(x, y))
                 elif x != 0 and y != 0:
                     if grid[y][x - 1] == 1 and grid[y - 1][x] > 0:
@@ -29,26 +29,15 @@ def get_corners(floorplan):
     return corners
 
 
-def can_place(floorplan, corner, block_width, block_height):
-    grid = floorplan.get_grid()
-    for x in range(corner.x, corner.x + block_width):
-        for y in range(corner.y, corner.y + block_height):
-            if grid[y][x] != 0:
-                return False
-    return True
-
-
-def try_placement(floorplan, corner, block_width, block_height):
-    if can_place(floorplan, corner, block_width, block_height):
+def try_placement(floorplan, corner, block):
+    if floorplan.can_place(block, corner.x, corner.y):
         floorplan_width, floorplan_height = floorplan.get_cur_dims()
-        floorplan_width = max(corner.x + block_width, floorplan_width)
-        floorplan_height = max(corner.y + block_height, floorplan_height)
+        floorplan_width = max(corner.x + block.get_width(), floorplan_width)
+        floorplan_height = max(corner.y + block.get_height(), floorplan_height)
     else:
         floorplan_width, floorplan_height = floorplan.get_max_dims()
 
-    cost = floorplan_width * floorplan_height
-
-    return cost
+    return floorplan_width * floorplan_height
 
 
 def add_to_floorplan(floorplan, block):
@@ -66,10 +55,10 @@ def add_to_floorplan(floorplan, block):
         for corner in corners:
             if not flipped:
                 cur_cost = try_placement(
-                    floorplan, corner, block.get_width(), block.get_height())
+                    floorplan, corner, block)
             else:
                 cur_cost = try_placement(
-                    floorplan, corner, block.get_height(), block.get_width())
+                    floorplan, corner, block)
 
             if cur_cost < min_cost:
                 min_cost = cur_cost
@@ -77,13 +66,10 @@ def add_to_floorplan(floorplan, block):
                 min_flipped = flipped
 
     # Place Block
-    block.set_placed(True)
-    block.set_x(min_corner.x)
-    block.set_y(min_corner.y)
     if min_flipped:
         block.swap_dims()
 
-    floorplan.place_block(block)
+    floorplan.place_block(block, min_corner.x, min_corner.y)
 
 
 def cluster_growth(order):

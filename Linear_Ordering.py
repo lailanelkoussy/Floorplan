@@ -1,7 +1,8 @@
 from Block import Block
 
+
 # using block with least number of connections
-def getInitialBlock(blocks):
+def get_initial_block(blocks):
     initial_block = blocks[0]
     for block in blocks:
         if len(block.connections) < len(initial_block.connections):
@@ -11,7 +12,7 @@ def getInitialBlock(blocks):
 
 
 # calculating the number of blocks connected to the block that are already placed
-def getNumOfTerminatingNets(block, blocks):
+def get_num_of_terminating_nets(block, blocks):
     count = 0
     for x in blocks:
         if x.block_id in block.connections:
@@ -21,7 +22,7 @@ def getNumOfTerminatingNets(block, blocks):
 
 
 # calculating
-def getNumOfNewNets(block, blocks):
+def get_num_of_new_nets(block, blocks):
     count = 0
     for x in blocks:
         if x.block_id in block.connections:
@@ -30,20 +31,20 @@ def getNumOfNewNets(block, blocks):
     return count
 
 
-def getNumOfContNets(block, blocks):
-    return getNumOfTerminatingNets(block, blocks)
+def get_num_of_cont_nets(block, blocks):
+    return get_num_of_terminating_nets(block, blocks)
 
 
-def getGain(block, blocks):
-    return getNumOfTerminatingNets(block, blocks) - getNumOfNewNets(block, blocks)
+def get_gain(block, blocks):
+    return get_num_of_terminating_nets(block, blocks) - get_num_of_new_nets(block, blocks)
 
 
-def getNextBlock(unplaced_blocks, blocks):
+def get_next_block(unplaced_blocks, blocks):
     gain = []
     max_gain = -999
     # line 5: blocks with maximum gain
     for i in range(len(unplaced_blocks)):
-        gain.append(getGain(unplaced_blocks[i], blocks))
+        gain.append(get_gain(unplaced_blocks[i], blocks))
         if gain[i] > max_gain:
             max_gain = gain[i]
 
@@ -59,7 +60,7 @@ def getNextBlock(unplaced_blocks, blocks):
 
     if len(max_gain_blocks) > 1:
         for i in range(len(max_gain_blocks)):
-            terminating_nets.append(getNumOfTerminatingNets(max_gain_blocks[i], blocks))
+            terminating_nets.append(get_num_of_terminating_nets(max_gain_blocks[i], blocks))
             if terminating_nets[i] > max_terminating_number:
                 max_terminating_number = terminating_nets[i]
 
@@ -74,7 +75,7 @@ def getNextBlock(unplaced_blocks, blocks):
     max_continuing_blocks = []
     if len(max_gain_blocks) > 1:
         for i in range(len(max_gain_blocks)):
-            continuing_nets.append(getNumOfTerminatingNets(max_gain_blocks[i], blocks))
+            continuing_nets.append(get_num_of_terminating_nets(max_gain_blocks[i], blocks))
             if continuing_nets[i] > max_continuing_number:
                 max_continuing_number = continuing_nets[i]
 
@@ -89,7 +90,7 @@ def getNextBlock(unplaced_blocks, blocks):
     min_continuing_blocks = []
     if len(max_gain_blocks) > 1:
         for i in range(len(max_gain_blocks)):
-            connected_nets.append(getNumOfContNets(max_gain_blocks[i], blocks))
+            connected_nets.append(get_num_of_cont_nets(max_gain_blocks[i], blocks))
             if connected_nets[i] < min_connected_number:
                 min_connected_number = connected_nets[i]
 
@@ -101,15 +102,15 @@ def getNextBlock(unplaced_blocks, blocks):
     return max_gain_blocks[0]
 
 
-def linearOrdering(blocks):
+def linear_ordering(blocks):
     unplaced_blocks = blocks.copy()
-    initial_block = getInitialBlock(blocks)
+    initial_block = get_initial_block(blocks)
     initial_block.placed = True
     unplaced_blocks.remove(initial_block)
     order = [initial_block]
 
     while len(unplaced_blocks) > 0:
-        new_block = getNextBlock(unplaced_blocks, blocks)
+        new_block = get_next_block(unplaced_blocks, blocks)
         new_block.placed = True
         unplaced_blocks.remove(new_block)
         order.append(new_block)
@@ -118,3 +119,5 @@ def linearOrdering(blocks):
         x.placed = False
 
     return order
+
+
