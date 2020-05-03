@@ -14,10 +14,10 @@ def stopping_criterion():
 
 # chooses two pairs to perturb
 def get_pair(floorplan, i):
-    range = len(floorplan.blocks)
+    possible_range = len(floorplan.blocks)
     seed(i)
-    a_index = random.randint(0, range - 1)
-    b_index = random.randint(0, range - 1)
+    a_index = random.randint(0, possible_range - 1)
+    b_index = random.randint(0, possible_range - 1)
     return floorplan.blocks[a_index], floorplan.blocks[b_index]
 
 
@@ -63,7 +63,7 @@ def try_switch(floorplan, block_a, block_b, beta):
         test_floorplan.place_block(block_a, block_b.x, block_b.y)
         if place_b:
             test_floorplan.place_block(block_b, block_a.x, block_a.y)
-            cost_a_swapped_b_b = test_floorplan.get_cost(beta)
+            cost_a_swapped_b = test_floorplan.get_cost(beta)
             test_floorplan.remove_block(block_b)
 
         if place_b_swapped:
@@ -96,14 +96,9 @@ def try_switch(floorplan, block_a, block_b, beta):
 def check_movement_options(floorplan, block):
     x, y = block.get_bottom_left_coordinates()
     xt, yt = block.get_top_right_coordinate()
-    grid = floorplan.get_grid()
 
     test_floorplan = floorplan.copy()
     test_floorplan.remove_block(block)
-    top = True
-    bottom = True
-    left = True
-    right = True
 
     # checking if can be pushed to the bottom by 1
     if y != 0:
@@ -141,7 +136,6 @@ def check_movement_options(floorplan, block):
 def try_moving_in_neighborhood(floorplan, block, beta):
     top, bottom, left, right = check_movement_options(floorplan, block)
     test_floorplan = floorplan.copy()
-    cost_original = test_floorplan.get_cost(beta)
     cost_top = 10000
     cost_top_right = 10000
     cost_top_left = 10000
