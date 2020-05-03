@@ -2,6 +2,8 @@
 import copy
 import Block
 import math
+from PIL import Image, ImageDraw
+
 
 
 def dist(p1, p2):
@@ -17,6 +19,32 @@ class Floorplan:
         self.grid = [[0 for x in range(max_width)] for y in range(max_height)]
         self.blocks = []
 
+    def get_block(self, block_id):
+        for block in self.blocks:
+            if block.get_id() == block_id:
+                return block
+        return None
+
+    def display(self):
+        fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red"]
+        step_count = 50
+        width = step_count * self.cur_width
+        height = step_count * self.cur_height
+
+        image = Image.new(mode='RGBA', size=(width + 1, height + 1), color="white")
+        draw = ImageDraw.Draw(image)
+
+        for y in range(self.cur_height):
+            for x in range(self.cur_width):
+                draw.rectangle(((x * step_count, y * step_count), ((x + 1) * step_count, (y + 1) * step_count)),
+                               fill=fp_colors[self.grid[y][x]], outline="black")
+
+                print(self.grid[y][x], end=" ")
+            print()
+
+        del draw
+        image.show()
+
     def can_place(self, block, x, y):
         for i in range(x, x + block.get_width() + 1):
             for j in range(y, y + block.get_height() + 1):
@@ -24,23 +52,35 @@ class Floorplan:
                     return False
         return True
 
+    def update_current_dims(self):
+        max_x = 0
+        max_y = 0
+        for block in self.blocks:
+            block_xt, block_yt = block.get_top_right_coordinate()
+            if block_xt > max_x:
+                max_x = block_xt
+            if block_yt > max_y:
+                max_y = block_yt
+
+        self.cur_height = max_y
+        self.cur_width = max_x
+
     def place_block(self, block, x, y):
         block.set_placed(True)
         xt = x + block.get_width()
         yt = y + block.get_height()
-        self.blocks.append(block)
-        self.cur_width = max(block.x + block.width, self.cur_width)
-        self.cur_height = max(block.y + block.height, self.cur_height)
 
         for i in range(x, xt + 1):
             for j in range(y, yt + 1):
                 assert (self.grid[j][i] == 0), "Place not free to place block!"
                 self.grid[j][i] = block.block_id
 
+        self.update_current_dims()
+
     def remove_block(self, block):
-        xt, yt = self.get_cur_dims()
-        for i in range(0, xt + 1):
-            for j in range(0, yt + 1):
+        xt, yt = self.get_max_dims()
+        for i in range(0, xt):
+            for j in range(0, yt):
                 if self.grid[j][i] == block.get_id():
                     self.grid[j][i] = 0
 

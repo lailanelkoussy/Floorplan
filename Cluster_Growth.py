@@ -70,6 +70,7 @@ def add_to_floorplan(floorplan, block):
 
     block.set_x(min_corner.x)
     block.set_y(min_corner.y)
+    floorplan.blocks.append(block)
     floorplan.place_block(block, min_corner.x, min_corner.y)
 
 
@@ -79,4 +80,5 @@ def cluster_growth(order):
     for block in order:
         add_to_floorplan(floorplan, block)
 
+    floorplan.update_current_dims()
     return floorplan

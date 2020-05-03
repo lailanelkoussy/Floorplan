@@ -4,7 +4,6 @@ from Block import Block
 from Coordinate import Coordinate
 import Simulated_Annealing
 import random
-from PIL import Image, ImageDraw
 
 if __name__ == "__main__":
     beta = 0.5
@@ -15,7 +14,6 @@ if __name__ == "__main__":
         blocks.append(block)
 
     print("Input:")
-
 
     blocks[0].addConnection(4)
     blocks[3].addConnection(1)
@@ -43,7 +41,7 @@ if __name__ == "__main__":
         print("Component ", b.block_id, ": ", "width = ", b.width, ", height = ", b.height, sep="")
         print("\tConnections: [", end="")
         for i in range(len(b.connections)):
-            print(b.connections[i], end=",]"[i == len(b.connections)-1])
+            print(b.connections[i], end=",]"[i == len(b.connections) - 1])
         print()
         print()
 
@@ -61,51 +59,21 @@ if __name__ == "__main__":
     print("\nRunning Cluster Growth Algorithm...")
 
     initial_floorplan = cluster_growth(order)
+    initial_floorplan.update_current_dims()
 
     # Displaying the Floorplan as a grid with colors
     print("Floorplan: ")
-    fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red"]
-    step_count = 50
-    width = step_count * initial_floorplan.cur_width
-    height = step_count * initial_floorplan.cur_height
-
-    image = Image.new(mode='RGBA', size=(width+1, height+1), color="white")
-    draw = ImageDraw.Draw(image)
-
-    for y in range(initial_floorplan.cur_height):
-        for x in range(initial_floorplan.cur_width):
-            draw.rectangle(((x * step_count, y * step_count), ((x + 1) * step_count, (y + 1) * step_count)), fill=fp_colors[initial_floorplan.grid[y][x]], outline="black")
-
-            print(initial_floorplan.grid[y][x], end=" ")
-        print()
+    initial_floorplan.display()
     print("Initial Area:", initial_floorplan.cur_width * initial_floorplan.cur_height)
     print("Initial Wire Length:", initial_floorplan.get_total_wire_length())
     print("Initial Cost: ", initial_floorplan.get_cost(beta))
 
-    del draw
-    image.show()
-
     print("Running simulated annealing...")
     final_floorplan = Simulated_Annealing.simulated_annealing(initial_floorplan, beta)
 
-
     print("Final Floorplan: ")
-    width = step_count * final_floorplan.cur_width
-    height = step_count * final_floorplan.cur_height
+    final_floorplan.display()
 
-    image = Image.new(mode='RGBA', size=(width+1, height+1), color="white")
-    draw = ImageDraw.Draw(image)
-
-    for y in range(final_floorplan.cur_height):
-        for x in range(final_floorplan.cur_width):
-            draw.rectangle(((x * step_count, y * step_count), ((x + 1) * step_count, (y + 1) * step_count)), fill=fp_colors[final_floorplan.grid[y][x]], outline="black")
-
-            print(final_floorplan.grid[y][x], end=" ")
-        print()
     print("Final Area:", final_floorplan.cur_width * final_floorplan.cur_height)
     print("Final Wire Length:", final_floorplan.get_total_wire_length())
     print("Final Cost: ", final_floorplan.get_cost(beta))
-    del draw
-    image.show()
-
-    pass
