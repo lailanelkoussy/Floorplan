@@ -18,34 +18,31 @@ class Floorplan:
         self.blocks = []
 
     def can_place(self, block, x, y):
-        for x in range(x, x + block.get_width()):
-            for y in range(y, y + block.get_height()):
-                if self.grid[y][x] != 0:
+        for i in range(x, x + block.get_width() + 1):
+            for j in range(y, y + block.get_height() + 1):
+                if self.grid[j][i] != 0:
                     return False
         return True
 
     def place_block(self, block, x, y):
         block.set_placed(True)
-        block.set_x(x)
-        block.set_y(y)
+        xt = x + block.get_width()
+        yt = y + block.get_height()
         self.blocks.append(block)
         self.cur_width = max(block.x + block.width, self.cur_width)
         self.cur_height = max(block.y + block.height, self.cur_height)
 
-        for x in range(block.x, block.x + block.width):
-            for y in range(block.y, block.y + block.height):
-                assert (self.grid[y][x] == 0), "Place not free to place block!"
-                self.grid[y][x] = block.block_id
+        for i in range(x, xt + 1):
+            for j in range(y, yt + 1):
+                assert (self.grid[j][i] == 0), "Place not free to place block!"
+                self.grid[j][i] = block.block_id
 
     def remove_block(self, block):
-        x, y = block.get_bottom_left_coordinates()
-        xb, yb = block.get_top_right_coordinate()
-        for i in range(x, xb):
-            for j in range(y, yb):
-                assert (self.grid[y][x] == block.get_id()), "Place not taken up by this block!"
-                self.grid[j][i] = 0
-
-        self.blocks.remove(block)
+        xt, yt = self.get_cur_dims()
+        for i in range(0, xt + 1):
+            for j in range(0, yt + 1):
+                if self.grid[j][i] == block.get_id():
+                    self.grid[j][i] = 0
 
     def get_grid(self):
         return self.grid

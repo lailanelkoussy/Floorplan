@@ -9,22 +9,21 @@ def get_corners(floorplan):
     w, h = floorplan.get_cur_dims()
     # Add outermost edges
     corners.add(Coordinate(w, 0))
-    corners.add(Coordinate(0, h))
+    if h != 0:
+        corners.add(Coordinate(0, h))
 
     # Find and add all other corners
     for y in range(len(grid)):
         for x in range(len(grid[0])):
             if grid[y][x] == 0:
-                if x == 0 and y == 0:
-                    corners.add(Coordinate(x, y))
-                elif x == 0 and y != 0:
+                if x == 0 and y != 0:
                     if grid[y - 1][x] > 0:
                         corners.add(Coordinate(x, y))
                 elif x != 0 and y == 0:
                     if grid[y][x - 1] > 0:
                         corners.add(Coordinate(x, y))
                 elif x != 0 and y != 0:
-                    if grid[y][x - 1] == 1 and grid[y - 1][x] > 0:
+                    if grid[y][x - 1] > 0 and grid[y - 1][x] > 0:
                         corners.add(Coordinate(x, y))
     return corners
 
@@ -69,6 +68,8 @@ def add_to_floorplan(floorplan, block):
     if min_flipped:
         block.swap_dims()
 
+    block.set_x(min_corner.x)
+    block.set_y(min_corner.y)
     floorplan.place_block(block, min_corner.x, min_corner.y)
 
 

@@ -9,6 +9,13 @@ class Block:
         self.y = -1
         self.placed = False
 
+    def __eq__(self, other):
+        if self.x == other.x and self.y == other.y and self.block_id == other.block_id and self.width == other.width \
+                and self.height == other.height:
+            return True
+        else:
+            return False
+
     def addConnection(self, connection_block_id):
         self.connections.append(connection_block_id)
 
