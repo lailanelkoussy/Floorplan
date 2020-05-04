@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     blocks = []
     for x in range(1, 7):
-        block = Block(x, random.randint(1, 20), random.randint(1, 10))  # random width and height, unimportant
+        block = Block(x, random.randint(1, 10), random.randint(1, 10))  # random width and height, unimportant
         blocks.append(block)
 
     print("Input:")
@@ -63,8 +63,8 @@ if __name__ == "__main__":
 
     # Displaying the Floorplan as a grid with colors
     print("Floorplan: ")
-    initial_floorplan.display()
-    print("Initial Area:", initial_floorplan.cur_width * initial_floorplan.cur_height)
+    initial_floorplan.display().show()
+    print("Initial Area:", initial_floorplan.get_area())
     print("Initial Wire Length:", initial_floorplan.get_total_wire_length())
     print("Initial Cost: ", initial_floorplan.get_cost(beta))
 
@@ -72,8 +72,8 @@ if __name__ == "__main__":
     final_floorplan = Simulated_Annealing.simulated_annealing(initial_floorplan, beta)
 
     print("Final Floorplan: ")
-    final_floorplan.display()
+    final_floorplan.display().show()
 
-    print("Final Area:", final_floorplan.cur_width * final_floorplan.cur_height)
+    print("Final Area:", final_floorplan.get_area())
     print("Final Wire Length:", final_floorplan.get_total_wire_length())
     print("Final Cost: ", final_floorplan.get_cost(beta))

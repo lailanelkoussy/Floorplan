@@ -5,7 +5,6 @@ import math
 from PIL import Image, ImageDraw
 
 
-
 def dist(p1, p2):
     return math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2))
 
@@ -23,11 +22,13 @@ class Floorplan:
         for block in self.blocks:
             if block.get_id() == block_id:
                 return block
+        print("Block", block_id, "does not exist!")
         return None
 
     def display(self):
         fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red"]
         step_count = 50
+        self.update_current_dims()
         width = step_count * self.cur_width
         height = step_count * self.cur_height
 
@@ -43,7 +44,8 @@ class Floorplan:
             print()
 
         del draw
-        image.show()
+        return image
+        # image.show()
 
     def can_place(self, block, x, y):
         for i in range(x, x + block.get_width() + 1):
@@ -52,18 +54,49 @@ class Floorplan:
                     return False
         return True
 
+    def shift_grid_left(self, shift):
+        for i in range(self.cur_width + 2):
+            for j in range(self.cur_height + 2):
+                self.grid[j][i] = self.grid[j][i + shift]
+
+    def shift_grid_down(self, shift):
+        for i in range(self.cur_width + 2):
+            for j in range(self.cur_height + 2):
+                self.grid[j][i] = self.grid[j + shift][i]
+
     def update_current_dims(self):
         max_x = 0
         max_y = 0
+        min_x = self.max_width
+        min_y = self.max_height
         for block in self.blocks:
             block_xt, block_yt = block.get_top_right_coordinate()
             if block_xt > max_x:
                 max_x = block_xt
             if block_yt > max_y:
                 max_y = block_yt
+            if block.x < min_x:
+                min_x = block.x
+            if block.y < min_y:
+                min_y = block.y
 
         self.cur_height = max_y
         self.cur_width = max_x
+
+        if min_x != 0 or min_y != 0:
+            if min_x != 0:
+                self.shift_grid_down(min_x)
+                for block in self.blocks:
+                    if min_x != 0:
+                        block.x = block.x - min_x
+
+            if min_y != 0:
+                self.shift_grid_down(min_y)
+                for block in self.blocks:
+                    if min_y != 0:
+                        block.y = block.y - min_y
+
+            self.update_current_dims()
 
     def place_block(self, block, x, y):
         block.set_placed(True)
@@ -76,6 +109,20 @@ class Floorplan:
                 self.grid[j][i] = block.block_id
 
         self.update_current_dims()
+
+    def empty_here(self, x, y, id):
+
+        if self.grid[y][x] != id:
+            return
+        else:
+            self.grid[y][x] = 0
+            if x != 0:
+                self.empty_here(x - 1, y, id)
+                if y != 0:
+                    self.empty_here(x - 1, y - 1, id)
+            if y != 0:
+                self.empty_here(x, y - 1, id)
+            self.empty_here(x+1, y+1, id)
 
     def remove_block(self, block):
         xt, yt = self.get_max_dims()
@@ -100,7 +147,7 @@ class Floorplan:
         return self.max_width, self.max_height
 
     def get_cost(self, beta):
-        return beta * self.cur_height * self.cur_height + (1 - beta) * self.get_total_wire_length()
+        return beta * self.get_area() + (1 - beta) * self.get_total_wire_length()
 
     def get_total_wire_length(self):
         wire_length = 0
@@ -140,3 +187,7 @@ class Floorplan:
             return y2 - y1b
         else:  # rectangles intersect
             return 0.
+
+    def get_area(self):
+        self.update_current_dims()
+        return self.cur_width * self.cur_height
