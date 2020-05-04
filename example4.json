@@ -1,0 +1,423 @@
+{
+  "design": "Example Design",
+  "module_name": "soc4",
+  "license": 1,
+  "version": "2.0",
+  "creation_date": {
+    "day": 8,
+    "month": 12,
+    "year": 2019
+  },
+  "designer": {
+    "username": ""
+  },
+  "soc": {
+    "architecture_type": "1",
+    "buses": [
+      {
+        "bus_id": 1,
+        "bus_standard": "AHB_lite",
+        "clock": 100
+      },
+      {
+        "bus_id": 2,
+        "bus_standard": "APB",
+        "clock": 100
+      }
+    ],
+    "components": [
+      {
+        "component_id": 1,
+        "component_type": "CPU",
+        "width": 20,
+        "height": 15,
+        "type": 1,
+        "base": "0x1000",
+        "cfg": {
+          "irqs": 16,
+          "mul": 1
+        },
+        "connection_1": {
+          "bus_id": 1,
+          "connection_type": "MASTER"
+        }
+      },
+      {
+        "component_id": 2,
+        "component_type": "timer0",
+        "width": 7,
+        "height": 10,
+        "base": "0x1000000",
+        "connection_1": {
+          "bus_id": 1,
+          "connection_type": "SLAVE"
+        },
+        
+        "class": 1,
+        "description": "rAVR TIMER8. Module emulate AT90S2313's 8-bit timer, but specified register define is sightly different.",
+        "regs": [
+          {
+            "name": "io_a",
+            "description": "input/output address",
+            "offset": "0",
+            "size": 6,
+            "access": 0,
+            "initial_value": "0"
+          },
+          {
+            "name": "io_di",
+            "description": "input/output data in",
+            "offset": "1",
+            "size": 8,
+            "access": 0,
+            "initial_value": "0"
+          },
+          {
+            "name": "io_do",
+            "description": "input/output data out",
+            "offset": "2",
+            "size": 8,
+            "access": 1,
+            "initial_value": "0"
+          },
+          {
+            "name": "io",
+            "description": "Timer control signals",
+            "offset": "3",
+            "size": 2,
+            "access": 0,
+            "initial_value": "0",
+            "fields": [
+                {
+                  "name": "re",
+                  "size": 1,
+                  "offset": 0,
+                  "description": "Read enable"
+                },
+                {
+                    "name": "we",
+                    "size": 1,
+                    "offset": 1,
+                    "description": "Write enable"
+                }
+              ]
+          }
+      ],
+        "irqs":[
+            {
+            "reg": "timer_ov_irq",
+            "field": "timer_ov_irq_ack",
+            "trig_level": 1
+            },
+            {
+              "reg": "timer_ov_irq_ack",
+              "field": "",
+              "trig_level": 1
+            }
+        ]
+      },
+      {
+        "component_id": 3,
+        "component_type": "i2c_master",
+        "width": 4,
+        "height": 6,
+        "base": "0x2000000",
+        "connection_1": {
+          "bus_id": 1,
+          "connection_type": "SLAVE"
+        },
+        "class": 1,
+        "description": "rRISC I2C Master",
+        "regs": [
+        {
+          "name": "io_a",
+          "description": "input/output address",
+          "offset": "0",
+          "size": 6,
+          "access": 0,
+          "initial_value": "0"
+        },
+        {
+          "name": "io_di",
+          "description": "input/output data in",
+          "offset": "1",
+          "size": 8,
+          "access": 0,
+          "initial_value": "0"
+        },
+        {
+          "name": "io_do",
+          "description": "input/output data out",
+          "offset": "2",
+          "size": 8,
+          "access": 1,
+          "initial_value": "0"
+        },
+        {
+          "name": "io",
+          "description": "I2C control signals",
+          "offset": "3",
+          "size": 2,
+          "access": 0,
+          "initial_value": "0",
+          "fields": [
+              {
+                "name": "re",
+                "size": 1,
+                "offset": 0,
+                "description": "Read enable"
+              },
+              {
+                  "name": "we",
+                  "size": 1,
+                  "offset": 1,
+                  "description": "Write enable"
+              }
+            ]
+        }
+        ],
+        "irqs":[
+            {
+            "reg": "i2c_irq",
+            "field": "",
+            "trig_level": 1
+            }
+        ]
+      },
+      {
+        "component_id": 4,
+        "component_type": "gpio",
+        "width": 4,
+        "height": 6,
+        "base": "0x3000000",
+        "connection_1": {
+          "bus_id": 1,
+          "connection_type": "SLAVE"
+        },
+        "class": 1,
+        "description": "General-purpose input/output",
+        "regs": [
+          {
+            "name": "io_a",
+            "description": "input/output address",
+            "offset": "0",
+            "size": 6,
+            "access": 0,
+            "initial_value": "0"
+          },
+          {
+            "name": "io_di",
+            "description": "input/output data in",
+            "offset": "1",
+            "size": 8,
+            "access": 0,
+            "initial_value": "0"
+          },
+          {
+            "name": "io_do",
+            "description": "input/output data out",
+            "offset": "2",
+            "size": 8,
+            "access": 1,
+            "initial_value": "0"
+          },
+          {
+            "name": "io",
+            "description": "GPIO control signals",
+            "offset": "3",
+            "size": 2,
+            "access": 0,
+            "initial_value": "0",
+            "fields": [
+                {
+                  "name": "re",
+                  "size": 1,
+                  "offset": 0,
+                  "description": "Read enable"
+                },
+                {
+                    "name": "we",
+                    "size": 1,
+                    "offset": 1,
+                    "description": "Write enable"
+                }
+              ]
+          }
+          ],
+        "irqs":[
+        ]
+          },
+    {
+        "component_id": 5,
+        "component_type": "spi",
+      "width": 5,
+        "height": 4,
+        "base": "0x0000100",
+        "connection_1": {
+          "bus_id": 2,
+          "connection_type": "SLAVE"
+        },
+        "class": 1,
+        "description": "rAVR SPI",
+        "regs": [
+          {
+            "name": "io_a",
+            "description": "input/output address",
+            "offset": "0",
+            "size": 6,
+            "access": 0,
+            "initial_value": "0"
+          },
+          {
+            "name": "io_di",
+            "description": "input/output data in",
+            "offset": "1",
+            "size": 8,
+            "access": 0,
+            "initial_value": "0"
+          },
+          {
+            "name": "io_do",
+            "description": "input/output data out",
+            "offset": "2",
+            "size": 8,
+            "access": 1,
+            "initial_value": "0"
+          },
+          {
+            "name": "io",
+            "description": "SPI control signals",
+            "offset": "3",
+            "size": 2,
+            "access": 0,
+            "initial_value": "0",
+            "fields": [
+                {
+                  "name": "re",
+                  "size": 1,
+                  "offset": 0,
+                  "description": "Read enable"
+                },
+                {
+                    "name": "we",
+                    "size": 1,
+                    "offset": 1,
+                    "description": "Write enable"
+                }
+              ]
+          }
+      ],
+        "irqs":[
+            {
+            "reg": "spi_irq",
+            "field": "",
+            "trig_level": 1
+            },
+            {
+              "reg": "spi_irq_ack",
+              "field": "",
+              "trig_level": 1
+            }
+        ]
+    }, 
+    {
+      "component_id": 6,
+      "component_type": "ahblite_to_apb",
+      "width": 7,
+        "height": 8,
+      "base": "0x4000000",
+      "connection_1": {
+        "bus_id": 1,
+        "connection_type": "SLAVE"
+      },
+      "connection_2": {
+        "bus_id": 2,
+        "connection_type": "MASTER"
+      }
+    },
+    {
+      "component_type": "uart",
+      "component_id": 7,
+      "width": 6,
+        "height": 7,
+      "base": "0x0000200",
+      "class": 1,
+      "description": "module is similar to AT96S2313's UART, but has limited function.",
+      "connection_1": {
+        "bus_id": 2,
+        "connection_type": "SLAVE"
+      },
+      "regs": [
+        {
+          "name": "io_a",
+          "description": "input/output address",
+          "offset": "0",
+          "size": 6,
+          "access": 0,
+          "initial_value": "0"
+        },
+        {
+          "name": "io_di",
+          "description": "input/output data in",
+          "offset": "1",
+          "size": 8,
+          "access": 0,
+          "initial_value": "0"
+        },
+        {
+          "name": "io_do",
+          "description": "input/output data out",
+          "offset": "2",
+          "size": 8,
+          "access": 1,
+          "initial_value": "0"
+        },
+        {
+          "name": "io",
+          "description": "UART control signals",
+          "offset": "3",
+          "size": 2,
+          "access": 0,
+          "initial_value": "0",
+          "fields": [
+              {
+                "name": "re",
+                "size": 1,
+                "offset": 0,
+                "description": "Read enable"
+              },
+              {
+                  "name": "we",
+                  "size": 1,
+                  "offset": 1,
+                  "description": "Write enable"
+              }
+            ]
+        }
+    ],
+      "irqs":[
+          {
+          "reg": "rxc_irq",
+          "field": "",
+          "trig_level": 1
+          },
+          {
+            "reg": "txc_irq",
+            "field": "",
+            "trig_level": 1
+          },
+          {
+            "reg": "udr_irq",
+            "field": "",
+            "trig_level": 1
+          },
+          {
+            "reg": "txc_irq_ack",
+            "field": "",
+            "trig_level": 1
+          }
+      ]
+  }                 
+        ]
+  }
+}

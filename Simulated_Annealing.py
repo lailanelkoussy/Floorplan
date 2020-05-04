@@ -14,7 +14,8 @@ def stopping_criterion(switched, i):
     if not switched:
         return True
 
-    if i == 75 or i == 110 or i == 150 or i == 170 or i == 200:
+    if i == 75 or i == 110 or i == 150 or i == 170 or i == 200 or i == 220 or i == 240 or i == 260 or i == 280 or \
+            i == 300 or i == 320 or i == 340:
         return True
 
     return False

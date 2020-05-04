@@ -1,6 +1,7 @@
 class Block:
 
-    def __init__(self, block_id, width, height, ):
+    def __init__(self, name, block_id, width, height):
+        self.name = name
         self.width = width
         self.height = height
         self.block_id = block_id
@@ -16,8 +17,9 @@ class Block:
         else:
             return False
 
-    def addConnection(self, connection_block_id):
-        self.connections.append(connection_block_id)
+    def add_connection(self, connection_block_id):
+        if connection_block_id not in self.connections:
+            self.connections.append(connection_block_id)
 
     def swap_dims(self):
         self.width, self.height = self.height, self.width

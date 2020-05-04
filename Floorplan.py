@@ -16,18 +16,24 @@ class Floorplan:
         self.max_width = max_width
         self.max_height = max_height
         self.grid = [[0 for x in range(max_width)] for y in range(max_height)]
-        self.blocks = []
+        self.blocks = {}
 
     def get_block(self, block_id):
-        for block in self.blocks:
-            if block.get_id() == block_id:
-                return block
-        print("Block", block_id, "does not exist!")
-        return None
+        return self.blocks[block_id]
+
+    def add_block(self, block):
+        self.blocks[block.get_id()] = block
+
+    def connect_blocks(self, block_a_id, block_b_id):
+        block_a = self.get_block(block_a_id)
+        block_b = self.get_block(block_b_id)
+        block_a.add_connection(block_b_id)
+        block_b.add_connections(block_a_id)
 
     def display(self):
         self.update_current_dims()
-        fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red"]
+        fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red", "pink", "violet", "grey", "maroon",
+                     "aquamarine", "coral", "orchid", "plum"]
         step_count = 50
         width = step_count * self.cur_width
         height = step_count * self.cur_height
@@ -45,7 +51,7 @@ class Floorplan:
 
         del draw
         return image
-        # image.show()
+
 
     def can_place(self, block, x, y):
         for i in range(x, x + block.get_width()):
@@ -69,7 +75,8 @@ class Floorplan:
         max_y = 0
         min_x = self.max_width
         min_y = self.max_height
-        for block in self.blocks:
+        for key in self.blocks:
+            block = self.blocks[key]
             block_xt, block_yt = block.get_top_right_coordinate()
             if block_xt > max_x:
                 max_x = block_xt
@@ -86,13 +93,15 @@ class Floorplan:
         if min_x != 0 or min_y != 0:
             if min_x != 0:
                 self.shift_grid_down(min_x)
-                for block in self.blocks:
+                for key in self.blocks:
+                    block = self.blocks[key]
                     if min_x != 0:
                         block.x = block.x - min_x
 
             if min_y != 0:
                 self.shift_grid_down(min_y)
-                for block in self.blocks:
+                for key in self.blocks:
+                    block = self.blocks[key]
                     if min_y != 0:
                         block.y = block.y - min_y
 
@@ -109,8 +118,6 @@ class Floorplan:
                 assert (self.grid[j][i] == 0), "Place not free to place block!"
                 self.grid[j][i] = block.block_id
 
-
-
     def empty_here(self, x, y, id):
         if self.grid[y][x] != id:
             return
@@ -122,24 +129,18 @@ class Floorplan:
                     self.empty_here(x - 1, y - 1, id)
             if y != 0:
                 self.empty_here(x, y - 1, id)
-            self.empty_here(x+1, y+1, id)
+            self.empty_here(x + 1, y + 1, id)
 
     def remove_block(self, block):
         x, y = block.get_bottom_left_coordinates()
         xt, yt = block.get_top_right_coordinate()
-        for i in range(x, xt+1):
-            for j in range(y,yt+1):
+        for i in range(x, xt + 1):
+            for j in range(y, yt + 1):
                 # assert (self.grid[j][i] == block.get_id()), "Place not taken up by block!"
                 self.grid[j][i] = 0
 
     def get_grid(self):
         return self.grid
-
-    def get_block(self, block_id):
-        for block in self.blocks:
-            if block.get_id() == block_id:
-                return block
-        return 0.
 
     def get_cur_dims(self):
         return self.cur_width, self.cur_height
@@ -153,7 +154,8 @@ class Floorplan:
 
     def get_total_wire_length(self):
         wire_length = 0
-        for block in self.blocks:
+        for key in self.blocks:
+            block = self.blocks[key]
             connections = block.get_connections()
             for connection in connections:
                 connection_block = self.get_block(connection)

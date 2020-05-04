@@ -6,35 +6,35 @@ import Simulated_Annealing
 import random
 
 if __name__ == "__main__":
-    beta = 0.5
+    beta = 0.6
 
     blocks = []
     for x in range(1, 7):
-        block = Block(x, random.randint(1, 10), random.randint(1, 10))  # random width and height, unimportant
+        block = Block("name", x, random.randint(1, 10), random.randint(1, 10))  # random width and height, unimportant
         blocks.append(block)
 
     print("Input:")
 
-    blocks[0].addConnection(4)
-    blocks[3].addConnection(1)
+    blocks[0].add_connection(4)
+    blocks[3].add_connection(1)
 
-    blocks[1].addConnection(3)
-    blocks[2].addConnection(2)
+    blocks[1].add_connection(3)
+    blocks[2].add_connection(2)
 
-    blocks[1].addConnection(4)
-    blocks[3].addConnection(2)
+    blocks[1].add_connection(4)
+    blocks[3].add_connection(2)
 
-    blocks[1].addConnection(5)
-    blocks[4].addConnection(2)
+    blocks[1].add_connection(5)
+    blocks[4].add_connection(2)
 
-    blocks[1].addConnection(6)
-    blocks[5].addConnection(2)
+    blocks[1].add_connection(6)
+    blocks[5].add_connection(2)
 
-    blocks[2].addConnection(4)
-    blocks[3].addConnection(3)
+    blocks[2].add_connection(4)
+    blocks[3].add_connection(3)
 
-    blocks[4].addConnection(6)
-    blocks[5].addConnection(5)
+    blocks[4].add_connection(6)
+    blocks[5].add_connection(5)
 
     # Output blocks
     for b in blocks:
