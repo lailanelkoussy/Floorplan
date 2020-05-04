@@ -17,7 +17,7 @@ def stopping_criterion(switched_prev, switched, possibilities, init_sol, cur_sol
     if cur_sol.get_cost(beta) > 1.3 * init_sol.get_cost(beta):
         return True
 
-    if i > 40:
+    if i == 100:
         return True
 
     for row in possibilities:
@@ -72,8 +72,6 @@ def get_possible_switch_options(floorplan, block_a_original, block_b_original):
     block_b.swap_dims()
     place_b_swapped = test_floorplan.can_place(block_b, block_a_x, block_a_y)
     block_b.swap_dims()
-
-
 
     return place_a, place_a_swapped, place_b, place_b_swapped
 

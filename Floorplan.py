@@ -27,12 +27,12 @@ class Floorplan:
 
     def display(self):
         self.update_current_dims()
-        fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red"]
+        fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red", "black"]
         step_count = 50
         width = step_count * self.cur_width
         height = step_count * self.cur_height
 
-        image = Image.new(mode='RGBA', size=(width + 1, height + 1), color="white")
+        image = Image.new(mode='RGBA', size=(width + 20, height + 20), color="white")
         draw = ImageDraw.Draw(image)
 
         for y in range(self.cur_height):
