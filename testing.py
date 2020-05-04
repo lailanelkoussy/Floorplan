@@ -68,7 +68,7 @@ if __name__ == "__main__":
     print("Initial Wire Length:", initial_floorplan.get_total_wire_length())
     print("Initial Cost: ", initial_floorplan.get_cost(beta))
 
-    print("Running simulated annealing...")
+    print("Running Simulated Annealing Algorithm...")
     final_floorplan = Simulated_Annealing.simulated_annealing(initial_floorplan, beta)
 
     print("Final Floorplan: ")

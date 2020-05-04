@@ -7,13 +7,17 @@ from Floorplan import Floorplan
 from random import seed
 from random import randint
 import copy
+import matplotlib.pyplot as plt
 
 
-def stopping_criterion(switched_prev, switched, possibilities, init_sol, cur_sol, beta):
+def stopping_criterion(switched_prev, switched, possibilities, init_sol, cur_sol, beta, i):
     if not (switched_prev or switched):
         return True
 
     if cur_sol.get_cost(beta) > 1.3 * init_sol.get_cost(beta):
+        return True
+
+    if i > 40:
         return True
 
     for row in possibilities:
@@ -68,6 +72,9 @@ def get_possible_switch_options(floorplan, block_a_original, block_b_original):
     block_b.swap_dims()
     place_b_swapped = test_floorplan.can_place(block_b, block_a_x, block_a_y)
     block_b.swap_dims()
+
+
+
     return place_a, place_a_swapped, place_b, place_b_swapped
 
 
@@ -91,26 +98,29 @@ def try_switch(floorplan, block_a_original, block_b_original, beta):
 
     if place_a and place_b:
         test_floorplan.place_block(block_a, block_b_x, block_b_y)
-        test_floorplan.place_block(block_b, block_a_x, block_a_y)
-        cost_a_b = test_floorplan.get_cost(beta)
-        test_floorplan.remove_block(block_b)
+        if test_floorplan.can_place(block_b, block_a_x, block_a_y):
+            test_floorplan.place_block(block_b, block_a_x, block_a_y)
+            cost_a_b = test_floorplan.get_cost(beta)
+            test_floorplan.remove_block(block_b)
         test_floorplan.remove_block(block_a)
 
     if place_a and place_b_swapped:
         test_floorplan.place_block(block_a, block_b_x, block_b_y)
         block_b.swap_dims()
-        test_floorplan.place_block(block_b, block_a_x, block_a_y)
-        cost_a_b_swapped = test_floorplan.get_cost(beta)
+        if test_floorplan.can_place(block_b, block_a_x, block_a_y):
+            test_floorplan.place_block(block_b, block_a_x, block_a_y)
+            cost_a_b_swapped = test_floorplan.get_cost(beta)
+            test_floorplan.remove_block(block_a)
         test_floorplan.remove_block(block_b)
-        test_floorplan.remove_block(block_a)
         block_b.swap_dims()
 
     if place_a_swapped and place_b:
         block_a.swap_dims()
         test_floorplan.place_block(block_a, block_b_x, block_b_y)
-        test_floorplan.place_block(block_b, block_a_x, block_a_y)
-        cost_a_swapped_b = test_floorplan.get_cost(beta)
-        test_floorplan.remove_block(block_b)
+        if test_floorplan.can_place(block_b, block_a_x, block_a_y):
+            test_floorplan.place_block(block_b, block_a_x, block_a_y)
+            cost_a_swapped_b = test_floorplan.get_cost(beta)
+            test_floorplan.remove_block(block_b)
         test_floorplan.remove_block(block_a)
         block_a.swap_dims()
 
@@ -118,9 +128,10 @@ def try_switch(floorplan, block_a_original, block_b_original, beta):
         block_a.swap_dims()
         test_floorplan.place_block(block_a, block_b_x, block_b_y)
         block_b.swap_dims()
-        test_floorplan.place_block(block_b, block_a_x, block_a_y)
-        cost_both_swapped = test_floorplan.get_cost(beta)
-        test_floorplan.remove_block(block_b)
+        if test_floorplan.can_place(block_b, block_a_x, block_a_y):
+            test_floorplan.place_block(block_b, block_a_x, block_a_y)
+            cost_both_swapped = test_floorplan.get_cost(beta)
+            test_floorplan.remove_block(block_b)
         test_floorplan.remove_block(block_a)
         block_a.swap_dims()
         block_b.swap_dims()
@@ -129,29 +140,36 @@ def try_switch(floorplan, block_a_original, block_b_original, beta):
 
     if min_cost == 10000:
         return None
-    elif min_cost == cost_a_swapped_b:
-        block_a.swap_dims()
+
+    final_floorplan = copy.deepcopy(floorplan)
+    final_block_a = final_floorplan.get_block(block_a_original.get_id())
+    final_block_b = final_floorplan.get_block(block_b_original.get_id())
+    assert (final_block_a.x == block_a_x and final_block_a.y == block_a_y), "block a misplaced!"
+    assert (final_block_b.x == block_b_x and final_block_b.y == block_b_y), "block a misplaced!"
+    final_floorplan.remove_block(final_block_a)
+    final_floorplan.remove_block(final_block_b)
+
+    if min_cost == cost_a_swapped_b:
+        final_block_a.swap_dims()
     elif min_cost == cost_a_b_swapped:
-        block_b.swap_dims()
+        final_block_b.swap_dims()
     elif min_cost == cost_both_swapped:
-        block_a.swap_dims()
-        block_b.swap_dims()
+        final_block_a.swap_dims()
+        final_block_b.swap_dims()
 
-    test_floorplan.place_block(block_a, block_b_x, block_b_y)
-    test_floorplan.place_block(block_b, block_a_x, block_a_y)
-    block_a.set_x(block_b_x)
-    block_a.set_y(block_b_y)
-    block_b.set_x(block_a_x)
-    block_b.set_y(block_a_y)
-    test_floorplan.update_current_dims()
-    return test_floorplan
+    final_floorplan.place_block(final_block_a, block_b_x, block_b_y)
+    final_floorplan.place_block(final_block_b, block_a_x, block_a_y)
+
+    final_floorplan.update_current_dims()
+    return final_floorplan
 
 
-def check_movement_options(floorplan, block):
-    x, y = block.get_bottom_left_coordinates()
-    xt, yt = block.get_top_right_coordinate()
+def check_movement_options(floorplan, original_block):
+    x, y = original_block.get_bottom_left_coordinates()
+    xt, yt = original_block.get_top_right_coordinate()
 
     test_floorplan = copy.deepcopy(floorplan)
+    block = test_floorplan.get_block(original_block.get_id())
     test_floorplan.remove_block(block)
 
     # checking if can be pushed to the bottom by 1
@@ -185,9 +203,10 @@ def check_movement_options(floorplan, block):
 # tries all possible combinations of possible movements
 # finds minimum cost solution and returns it
 # if impossible to move, then returns original solution
-def try_moving_in_neighborhood(floorplan, block, beta):
-    top, bottom, left, right = check_movement_options(floorplan, block)
+def try_moving_in_neighborhood(floorplan, original_block, beta):
     test_floorplan = copy.deepcopy(floorplan)
+    block = test_floorplan.get_block(original_block.get_id())
+    top, bottom, left, right = check_movement_options(test_floorplan, block)
     cost_top = 10000
     cost_bottom = 10000
     cost_right = 10000
@@ -221,19 +240,27 @@ def try_moving_in_neighborhood(floorplan, block, beta):
     if min_cost == 10000:
         return None
 
-    test_floorplan.remove_block(block)
+    final_floorplan = copy.deepcopy(floorplan)
+    final_block = final_floorplan.get_block(original_block.get_id())
+    assert (final_block.x == x and final_block.y == y), "block not placed where supposed to be!"
+    final_floorplan.remove_block(final_block)
 
     if min_cost == cost_top:
-        test_floorplan.place_block(block, x, y + 1)
+        final_floorplan.place_block(final_block, x, y + 1)
+        y = y + 1
     elif min_cost == cost_bottom:
-        test_floorplan.place_block(block, x, y - 1)
+        final_floorplan.place_block(final_block, x, y - 1)
+        y = y - 1
     elif min_cost == cost_right:
-        test_floorplan.place_block(block, x + 1, y)
+        final_floorplan.place_block(final_block, x + 1, y)
+        x = x + 1
     elif min_cost == cost_left:
-        test_floorplan.place_block(block, x - 1, y)
+        final_floorplan.place_block(final_block, x - 1, y)
+        x = x - 1
 
-    test_floorplan.update_current_dims()
-    return test_floorplan
+    assert (final_block.x == x and final_block.y == y), "block not placed where supposed to be!"
+    final_floorplan.update_current_dims()
+    return final_floorplan
 
 
 # function tries three things
@@ -306,7 +333,7 @@ def initialize_possibilities(number_of_blocks):
 # T0: initial temperature, better be high
 # T_min: minimum temperature
 # alpha: ratio between (0,1) indicating rate of cooling , optimal when higher
-def simulated_annealing(init_sol, beta, T0=200, T_min=50, alpha=0.80):
+def simulated_annealing(init_sol, beta, T0=300, T_min=50, alpha=0.80):
     T = T0
     i = 0
     print("Initial temperature:", T0)
@@ -316,6 +343,8 @@ def simulated_annealing(init_sol, beta, T0=200, T_min=50, alpha=0.80):
     curr_cost = init_sol.get_cost(beta)
     switched = True
     gif = [init_sol.display()]
+    x = []
+    costs = []
     while T > T_min:
         possibilities = initialize_possibilities(len(init_sol.blocks))
         while True:
@@ -337,6 +366,7 @@ def simulated_annealing(init_sol, beta, T0=200, T_min=50, alpha=0.80):
                     print("Trial solution better than current solution!")
                     curr_cost = trial_cost
                     curr_sol = copy.deepcopy(trial_sol)
+                    curr_sol.update_current_dims()
                     gif.append(curr_sol.display())
                     switched = True
                     print("Switching solution...")
@@ -346,6 +376,7 @@ def simulated_annealing(init_sol, beta, T0=200, T_min=50, alpha=0.80):
                     if r < math.exp(-delta_cost / T):
                         curr_cost = trial_cost
                         curr_sol = copy.deepcopy(trial_sol)
+                        curr_sol.update_current_dims()
                         gif.append(curr_sol.display())
                         switched = True
                         print("Switching solution anyways...")
@@ -356,8 +387,10 @@ def simulated_annealing(init_sol, beta, T0=200, T_min=50, alpha=0.80):
             print("Current Area:", curr_sol.get_area())
             print("Current Wire Length:", curr_sol.get_total_wire_length())
             print("Current Cost: ", curr_sol.get_cost(beta), "\n")
+            costs.append(curr_sol.get_cost(beta))
+            x.append(i)
 
-            if stopping_criterion(switched_prev, switched, possibilities, init_sol, curr_sol, beta):
+            if stopping_criterion(switched_prev, switched, possibilities, init_sol, curr_sol, beta, i):
                 print("Stopping criterion met, cooling down...")
                 break
         T = alpha * T  # decreasing the temperature
@@ -367,5 +400,10 @@ def simulated_annealing(init_sol, beta, T0=200, T_min=50, alpha=0.80):
                     append_images=gif[1:],
                     duration=200,
                     loop=0)
+
+    plt.plot(x, costs)
+    plt.xlabel('Iterations')
+    plt.ylabel('Cost')
+    plt.show()
 
     return curr_sol

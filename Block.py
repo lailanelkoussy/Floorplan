@@ -44,7 +44,7 @@ class Block:
         return self.x, self.y
 
     def get_top_right_coordinate(self):
-        return self.x + self.width, self.y + self.height
+        return self.x + self.width - 1, self.y + self.height - 1
 
     def get_connections(self):
         return self.connections

@@ -68,8 +68,8 @@ def add_to_floorplan(floorplan, block):
     if min_flipped:
         block.swap_dims()
 
-    block.set_x(min_corner.x)
-    block.set_y(min_corner.y)
+    # block.set_x(min_corner.x)
+    # block.set_y(min_corner.y)
     floorplan.blocks.append(block)
     floorplan.place_block(block, min_corner.x, min_corner.y)
     floorplan.update_current_dims()

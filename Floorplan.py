@@ -26,9 +26,9 @@ class Floorplan:
         return None
 
     def display(self):
+        self.update_current_dims()
         fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red"]
         step_count = 50
-        self.update_current_dims()
         width = step_count * self.cur_width
         height = step_count * self.cur_height
 
@@ -48,8 +48,8 @@ class Floorplan:
         # image.show()
 
     def can_place(self, block, x, y):
-        for i in range(x, x + block.get_width() + 1):
-            for j in range(y, y + block.get_height() + 1):
+        for i in range(x, x + block.get_width()):
+            for j in range(y, y + block.get_height()):
                 if self.grid[j][i] != 0:
                     return False
         return True
@@ -100,18 +100,18 @@ class Floorplan:
 
     def place_block(self, block, x, y):
         block.set_placed(True)
-        xt = x + block.get_width()
-        yt = y + block.get_height()
-
-        for i in range(x, xt + 1):
-            for j in range(y, yt + 1):
+        block.set_x(x)
+        block.set_y(y)
+        xt = x + block.width
+        yt = y + block.height
+        for i in range(x, xt):
+            for j in range(y, yt):
                 assert (self.grid[j][i] == 0), "Place not free to place block!"
                 self.grid[j][i] = block.block_id
 
-        self.update_current_dims()
+
 
     def empty_here(self, x, y, id):
-
         if self.grid[y][x] != id:
             return
         else:
@@ -125,11 +125,12 @@ class Floorplan:
             self.empty_here(x+1, y+1, id)
 
     def remove_block(self, block):
-        xt, yt = self.get_max_dims()
-        for i in range(0, xt):
-            for j in range(0, yt):
-                if self.grid[j][i] == block.get_id():
-                    self.grid[j][i] = 0
+        x, y = block.get_bottom_left_coordinates()
+        xt, yt = block.get_top_right_coordinate()
+        for i in range(x, xt+1):
+            for j in range(y,yt+1):
+                assert (self.grid[j][i] == block.get_id()), "Place not taken up by block!"
+                self.grid[j][i] = 0
 
     def get_grid(self):
         return self.grid
