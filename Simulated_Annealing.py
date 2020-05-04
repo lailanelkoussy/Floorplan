@@ -218,7 +218,6 @@ def try_moving_in_neighborhood(floorplan, original_block, beta):
         test_floorplan.place_block(block, x + 1, y)
         cost_right = test_floorplan.get_cost(beta)
         test_floorplan.remove_block(block)
-
     min_cost = min(cost_top, cost_bottom, cost_right, cost_left)
 
     if min_cost == 10000:
