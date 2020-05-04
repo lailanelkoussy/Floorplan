@@ -27,12 +27,12 @@ class Floorplan:
 
     def display(self):
         self.update_current_dims()
-        fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red", "black"]
+        fp_colors = ["white", "yellow", "green", "purple", "blue", "cyan", "red"]
         step_count = 50
         width = step_count * self.cur_width
         height = step_count * self.cur_height
 
-        image = Image.new(mode='RGBA', size=(width + 20, height + 20), color="white")
+        image = Image.new(mode='RGBA', size=(width + 1, height + 1), color="white")
         draw = ImageDraw.Draw(image)
 
         for y in range(self.cur_height):
@@ -148,6 +148,7 @@ class Floorplan:
         return self.max_width, self.max_height
 
     def get_cost(self, beta):
+        self.update_current_dims()
         return beta * self.get_area() + (1 - beta) * self.get_total_wire_length()
 
     def get_total_wire_length(self):
