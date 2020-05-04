@@ -136,7 +136,7 @@ class Floorplan:
         xt, yt = block.get_top_right_coordinate()
         for i in range(x, xt + 1):
             for j in range(y, yt + 1):
-                # assert (self.grid[j][i] == block.get_id()), "Place not taken up by block!"
+                assert (self.grid[j][i] == block.get_id()), "Place not taken up by block!"
                 self.grid[j][i] = 0
 
     def get_grid(self):
