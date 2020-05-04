@@ -10,39 +10,32 @@ import copy
 import matplotlib.pyplot as plt
 
 
-def stopping_criterion(switched_prev, switched, possibilities):
-    if not (switched_prev or switched):
+def stopping_criterion( switched, i ):
+    if not switched:
         return True
 
-    # if i == 40 or i == 200:
-    #     return True
+    if i == 75:
+        return True
+    if i == 110:
+        return True
 
-    for row in possibilities:
-        for entry in row:
-            if entry is False:
-                return False
-
-    return True
+    return False
 
 
 # chooses two pairs to perturb
-def get_pair(floorplan, x, possibilities):
+def get_pair(floorplan, x, z):
     possible_range = len(floorplan.blocks)
-    seed(x)
-    index = randint(0, possible_range * possible_range - 1)
-    possible = possible_range * possible_range - 1
-    while possible != 0:
-        i = index // possible_range
-        j = index % possible_range
-        if possibilities[i][j] is False:
-            block_a = floorplan.get_block(i + 1)
-            block_b = floorplan.get_block(j + 1)
-            assert (block_a is not None), "block_a does not exist"
-            assert (block_b is not None), "block_b does not exist!"
-            return block_a, block_b
-        index += 1
-        index = index % possible_range * possible_range - 1
-        possible = possible - 1
+    seed(x + z)
+    while True:
+        a = randint(0, possible_range - 1)
+        b = randint(0, possible_range - 1)
+        if a != b:
+            break
+
+    block_a = floorplan.get_block(a + 1)
+    block_b = floorplan.get_block(b + 1)
+
+    return block_a, block_b
 
 
 def get_possible_switch_options(floorplan, block_a_original, block_b_original):
@@ -336,20 +329,19 @@ def simulated_annealing(init_sol, beta, T0=700, T_min=20, alpha=0.95):
     min_sol = copy.deepcopy(init_sol)
     switched = True
     gif = [init_sol.display()]
+    j = 0
     x = []
     costs = []
     areas = []
     wire_lengths = []
     while T > T_min:
-        possibilities = initialize_possibilities(len(init_sol.blocks))
+        j = j + 1
         while True:
-            switched_prev = switched
             switched = False
             i = i + 1
             print("Iteration number: ", i)
-            a, b = get_pair(curr_sol, i, possibilities)
-            possibilities[a.get_id() - 1][b.get_id() - 1] = True
-            possibilities[b.get_id() - 1][a.get_id() - 1] = True
+            a, b = get_pair(curr_sol, i, j)
+
             print("Chosen pair: block", a.get_id(), ", block ", b.get_id())
             print("Finding possible actions...")
             trial_sol = try_move(curr_sol, a, b, beta)
@@ -376,8 +368,8 @@ def simulated_annealing(init_sol, beta, T0=700, T_min=20, alpha=0.95):
                         switched = True
                         print("Switching solution anyways...")
 
-            if curr_sol.get_cost(beta) < min_sol.get_cost(beta):
-                min_sol = copy.deepcopy(curr_sol)
+                if curr_sol.get_cost(beta) < min_sol.get_cost(beta):
+                    min_sol = copy.deepcopy(curr_sol)
             else:
                 print("No possible moves for this pair...")
                 switched = False
@@ -390,7 +382,7 @@ def simulated_annealing(init_sol, beta, T0=700, T_min=20, alpha=0.95):
             wire_lengths.append(curr_sol.get_total_wire_length())
             x.append(i)
 
-            if stopping_criterion(switched_prev, switched, possibilities):
+            if stopping_criterion(switched, i):
                 print("Stopping criterion met, cooling down...")
                 break
         T = alpha * T  # decreasing the temperature
