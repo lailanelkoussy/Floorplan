@@ -10,13 +10,11 @@ import copy
 import matplotlib.pyplot as plt
 
 
-def stopping_criterion( switched, i ):
+def stopping_criterion(switched, i):
     if not switched:
         return True
 
-    if i == 75:
-        return True
-    if i == 110:
+    if i == 75 or i == 110 or i == 150 or i == 170 or i == 200:
         return True
 
     return False
@@ -318,7 +316,7 @@ def initialize_possibilities(number_of_blocks):
 # T0: initial temperature, better be high
 # T_min: minimum temperature
 # alpha: ratio between (0,1) indicating rate of cooling , optimal when higher
-def simulated_annealing(init_sol, beta, T0=700, T_min=20, alpha=0.95):
+def simulated_annealing(init_sol, beta, T0=500, T_min=20, alpha=0.85):
     T = T0
     i = 0
     print("Initial temperature:", T0)
