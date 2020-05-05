@@ -6,11 +6,11 @@ import Simulated_Annealing
 import random
 
 if __name__ == "__main__":
-    beta = 0.6
+    beta = 0.5
 
     blocks = []
     for x in range(1, 7):
-        block = Block("name", x, random.randint(1, 10), random.randint(1, 10))  # random width and height, unimportant
+        block = Block(x, random.randint(1, 10), random.randint(1, 10))  # random width and height, unimportant
         blocks.append(block)
 
     print("Input:")

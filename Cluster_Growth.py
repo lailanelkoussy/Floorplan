@@ -70,7 +70,7 @@ def add_to_floorplan(floorplan, block):
 
     # block.set_x(min_corner.x)
     # block.set_y(min_corner.y)
-    floorplan.add_block(block)
+    floorplan.blocks.append(block)
     floorplan.place_block(block, min_corner.x, min_corner.y)
     floorplan.update_current_dims()
 

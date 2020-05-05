@@ -29,9 +29,9 @@
       {
         "component_id": 1,
         "component_type": "CPU",
-        "width": 20,
-        "height": 15,
         "type": 1,
+        "width":20,
+        "height": 15,
         "base": "0x1000",
         "cfg": {
           "irqs": 16,
@@ -45,8 +45,8 @@
       {
         "component_id": 2,
         "component_type": "timer0",
-        "width": 7,
-        "height": 10,
+        "width":10,
+        "height": 5,
         "base": "0x1000000",
         "connection_1": {
           "bus_id": 1,
@@ -119,8 +119,8 @@
       {
         "component_id": 3,
         "component_type": "i2c_master",
-        "width": 4,
-        "height": 6,
+        "width":7,
+        "height": 3,
         "base": "0x2000000",
         "connection_1": {
           "bus_id": 1,
@@ -186,9 +186,9 @@
       },
       {
         "component_id": 4,
+        "width":7,
+        "height": 4,
         "component_type": "gpio",
-        "width": 4,
-        "height": 6,
         "base": "0x3000000",
         "connection_1": {
           "bus_id": 1,
@@ -250,8 +250,8 @@
     {
         "component_id": 5,
         "component_type": "spi",
-      "width": 5,
-        "height": 4,
+      "width":6,
+        "height": 5,
         "base": "0x0000100",
         "connection_1": {
           "bus_id": 2,
@@ -323,8 +323,8 @@
     {
       "component_id": 6,
       "component_type": "ahblite_to_apb",
-      "width": 7,
-        "height": 8,
+      "width":9,
+        "height": 7,
       "base": "0x4000000",
       "connection_1": {
         "bus_id": 1,
@@ -338,8 +338,8 @@
     {
       "component_type": "uart",
       "component_id": 7,
-      "width": 6,
-        "height": 7,
+      "width":6,
+        "height": 4,
       "base": "0x0000200",
       "class": 1,
       "description": "module is similar to AT96S2313's UART, but has limited function.",

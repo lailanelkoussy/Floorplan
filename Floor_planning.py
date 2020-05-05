@@ -33,7 +33,7 @@ def get_blocks_and_connections(JSON):
 
 def get_blocks(chip):
     components = chip["components"]
-    blocks = {}
+    blocks = []
 
     for component in components:
         block_id = component["component_id"]
@@ -41,7 +41,7 @@ def get_blocks(chip):
         width = component["width"]
         height = component["height"]
         block = Block(name, block_id, width, height)
-        blocks[block_id] = block
+        blocks.append(block)
 
     return blocks
 
@@ -64,17 +64,20 @@ def connect_blocks(blocks, chip):
 
 def connect_blocks_on_bus(blocks, bus):
     for i in range(len(bus)):
-        curr_block = blocks[bus[i]]
+        curr_block = get_block(blocks, bus[i])
         for j in range(len(bus)):
             if j != i:
                 curr_block.add_connection(bus[j])
 
 
+def get_block(blocks, block_id):
+    for x in blocks:
+        if x.get_id() == block_id:
+            return x
+
+
 def get_initial_floorplan(blocks):
-    new_blocks = []
-    for i in blocks:
-        new_blocks.append(blocks[i])
-    order = Linear_Ordering.linear_ordering(new_blocks)
+    order = Linear_Ordering.linear_ordering(blocks)
 
     init_sol = Cluster_Growth.cluster_growth(order)
     return init_sol

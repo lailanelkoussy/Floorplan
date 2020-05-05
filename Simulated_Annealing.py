@@ -10,12 +10,16 @@ import copy
 import matplotlib.pyplot as plt
 
 
-def stopping_criterion(switched, i):
+def stopping_criterion(switched, i, cur_cost, min_cost):
     if not switched:
         return True
 
-    if i == 75 or i == 110 or i == 150 or i == 170 or i == 200 or i == 220 or i == 240 or i == 260 or i == 280 or \
-            i == 300 or i == 320 or i == 340 or i == 360 or i == 380 or i == 400 or i == 420 or i == 440 or i == 460:
+    if cur_cost - min_cost < 2 and i > 200:
+        return True
+
+    if i == 75 or i == 110 or i == 150 or i == 170 or i == 200 or i == 230 or i == 250 or i == 270 or i == 300 or \
+            i == 320 or i == 350 or i == 370 or i == 400 or i == 420 or i == 440 or i == 460 or i == 480 or i == 500 \
+            or i == 520 or i == 540:
         return True
 
     return False
@@ -218,6 +222,7 @@ def try_moving_in_neighborhood(floorplan, original_block, beta):
         test_floorplan.place_block(block, x + 1, y)
         cost_right = test_floorplan.get_cost(beta)
         test_floorplan.remove_block(block)
+
     min_cost = min(cost_top, cost_bottom, cost_right, cost_left)
 
     if min_cost == 10000:
@@ -316,7 +321,7 @@ def initialize_possibilities(number_of_blocks):
 # T0: initial temperature, better be high
 # T_min: minimum temperature
 # alpha: ratio between (0,1) indicating rate of cooling , optimal when higher
-def simulated_annealing(init_sol, beta, T0=500, T_min=20, alpha=0.85):
+def simulated_annealing(init_sol, beta, T0=700, T_min=20, alpha=0.95):
     T = T0
     i = 0
     print("Initial temperature:", T0)
@@ -380,7 +385,7 @@ def simulated_annealing(init_sol, beta, T0=500, T_min=20, alpha=0.85):
             wire_lengths.append(curr_sol.get_total_wire_length())
             x.append(i)
 
-            if stopping_criterion(switched, i):
+            if stopping_criterion(switched, i, curr_cost, min_sol.get_cost(beta)):
                 print("Stopping criterion met, cooling down...")
                 break
         T = alpha * T  # decreasing the temperature
