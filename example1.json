@@ -24,6 +24,8 @@
       {
         "component_id": 1,
         "component_type": "CPU",
+        "width":20,
+        "height": 15,
         "type": 1,
         "base": "0x1000",
         "cfg": {
@@ -38,6 +40,8 @@
       {
         "component_id": 2,
         "component_type": "SLAVE1",
+        "width":7,
+        "height": 4,
         "base": "0x1000000",
         "connection_1": {
           "bus_id": 1,
@@ -48,6 +52,8 @@
         "component_id": 3,
         "component_type": "SLAVE2",
         "base": "0x2000000",
+        "width":10,
+        "height": 5,
         "connection_1": {
           "bus_id": 1,
           "connection_type": "SLAVE"
@@ -56,6 +62,8 @@
       {
         "component_id": 4,
         "component_type": "gpio",
+        "width":7,
+        "height": 4,
         "base": "0x3000000",
         "connection_1": {
           "bus_id": 1,
