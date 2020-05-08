@@ -20,6 +20,8 @@ def make_floorplan(JSON, beta, T0=500, T_min=20, alpha=0.85):
     print("Final Area:", final_sol.get_area())
     print("Final Wire Length:", final_sol.get_total_wire_length())
     print("Final Cost: ", final_sol.get_cost(beta))
+
+
     return final_sol
 
 

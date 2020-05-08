@@ -2,6 +2,7 @@ class Block:
 
     def __init__(self, name, block_id, width, height, ):
         self.width = width
+        self.name = name
         self.height = height
         self.block_id = block_id
         self.connections = []  # assuming connections are pair relations

@@ -18,6 +18,21 @@ class Floorplan:
         self.grid = [[0 for x in range(max_width)] for y in range(max_height)]
         self.blocks = []
 
+    def make_text_file(self, file_name):
+        file = open(file_name, "w")
+        for block in self.blocks:
+            file.write(block.name + "id #" + str(block.get_id()) +": (" + str(block.x) + ", " + str(block.y) + ")\n")
+
+        file.write("Grid: \n")
+
+        self.update_current_dims()
+
+        for x in self.grid:
+            for y in x:
+                file.write(str(y))
+            file.write("\n")
+
+
     def get_block(self, block_id):
         for block in self.blocks:
             if block.get_id() == block_id:
